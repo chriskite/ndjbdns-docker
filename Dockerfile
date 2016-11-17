@@ -13,8 +13,13 @@ ENV LANG en_US.UTF-8
 ADD ndjbdns-1.06.tar.gz /src
 
 RUN apt-get update \
-    && apt-get install -y build-essential \
+    && DEBIAN_FRONTEND=noninteractive \
+       apt-get --no-install-recommends install -y build-essential \
     && cd /src/ndjbdns-1.06 \
     && ./configure \
     && make -j 5 \
-    && make install
+    && make install \
+    && apt-get remove -y build-essential \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /src /var/lib/apt/lists/*
